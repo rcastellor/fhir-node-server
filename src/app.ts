@@ -14,11 +14,12 @@ const MongoStore = mongo(session);
 dotenv.config({ path: ".env.example" });
 
 // Controllers (route handlers)
-//import * as homeController from "./controllers/home";
-//import * as userController from "./controllers/user";
-//import * as apiController from "./controllers/api";
-//import * as contactController from "./controllers/contact";
+// import * as homeController from "./controllers/home";
+// import * as userController from "./controllers/user";
+// import * as apiController from "./controllers/api";
+// import * as contactController from "./controllers/contact";
 
+import * as patientController from "./controllers/PatientResourceController";
 
 
 // Create Express server
@@ -38,11 +39,11 @@ mongoose.connect(mongoUrl, {useMongoClient: true}).then(
 app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "pug");
-//app.use(compression()); eval compression use
+// app.use(compression()); eval compression use
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(expressValidator());
+// app.use(expressValidator());
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -52,11 +53,12 @@ app.use(session({
     autoReconnect: true
   })
 }));
-//app.use(passport.initialize());
-//app.use(passport.session());
-//app.use(flash());
-//app.use(lusca.xframe("SAMEORIGIN"));
-//app.use(lusca.xssProtection(true));
+// app.use(passport.initialize());
+// app.use(passport.session());
+// app.use(flash());
+// app.use(lusca.xframe("SAMEORIGIN"));
+// app.use(lusca.xssProtection(true));
+/*
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
@@ -75,11 +77,16 @@ app.use((req, res, next) => {
   }
   next();
 });
+*/
 app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }));
 
-/**
- * Primary app routes.
- */
+// FHIR rest api
+
+app.get("/Patient", patientController.Patient);
+
+/*
+  Primary app routes.
+
 app.get("/", homeController.index);
 app.get("/login", userController.getLogin);
 app.post("/login", userController.postLogin);
@@ -97,19 +104,19 @@ app.post("/account/profile", passportConfig.isAuthenticated, userController.post
 app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
 app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
-
-/**
- * API examples routes.
  */
+
+/*
+  API examples routes.
+
 app.get("/api", apiController.getApi);
 app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 
-/**
- * OAuth authentication routes. (Sign in)
- */
+  OAuth authentication routes. (Sign in)
+
 app.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email", "public_profile"] }));
 app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
   res.redirect(req.session.returnTo || "/");
 });
-
+ */
 module.exports = app;
